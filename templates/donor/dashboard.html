@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+{% block title %}Donor Dashboard{% endblock %}
+
+{% block extra_head %}
+<style>
+.dashboard-header {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: white;
+    border-radius: 24px;
+    padding: 28px 32px;
+    box-shadow: 0 20px 45px rgba(220,38,38,0.35);
+}
+
+.stat-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+}
+
+.request-card {
+    background: white;
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+    transition: transform .2s;
+}
+
+.request-card:hover {
+    transform: translateY(-4px);
+}
+
+.badge-status {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-pending { background: #fde68a; color: #92400e; }
+.badge-accepted { background: #bbf7d0; color: #065f46; }
+.badge-rejected { background: #fecaca; color: #7f1d1d; }
+.badge-completed { background: #86efac; color: #065f46; }
+
+.action-btn {
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ================= HEADER ================= -->
+<div class="dashboard-header mb-4">
+    <h3 class="fw-bold mb-1">
+        👋 Welcome, {{ request.user.username }}
+    </h3>
+    <p class="mb-0 opacity-75">
+        Thank you for saving lives by donating blood
+    </p>
+</div>
+
+<!-- ================= STATS ================= -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="stat-card text-center">
+            <h5 class="fw-bold text-danger">{{ requests|length }}</h5>
+            <p class="text-muted mb-0">Total Requests</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="stat-card text-center">
+            <h5 class="fw-bold text-success">
+                {{ requests|dictsort:"status"|length }}
+            </h5>
+            <p class="text-muted mb-0">Accepted Requests</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="stat-card text-center">
+            <h5 class="fw-bold text-primary">
+                {{ requests|length }}
+            </h5>
+            <p class="text-muted mb-0">Lives Impacted</p>
+        </div>
+    </div>
+</div>
+
+<!-- ================= REQUESTS ================= -->
+<h4 class="fw-bold mb-3">🩸 Blood Requests</h4>
+
+{% for r in requests %}
+<div class="request-card mb-3">
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="fw-bold mb-0">
+            🏥
+            <a href="{% url 'hospital:hospital_profile' r.hospital.id %}"
+               class="text-decoration-none">
+                {{ r.hospital.hospital_name }}
+            </a>
+        </h5>
+
+        {% if r.status == "pending" %}
+            <span class="badge-status badge-pending">Pending</span>
+        {% elif r.status == "accepted" %}
+            <span class="badge-status badge-accepted">Accepted</span>
+        {% elif r.status == "rejected" %}
+            <span class="badge-status badge-rejected">Rejected</span>
+        {% else %}
+            <span class="badge-status badge-completed">Completed</span>
+        {% endif %}
+    </div>
+
+    <p class="text-muted mb-2">
+        <strong>Message:</strong> {{ r.message }}
+    </p>
+
+    <p class="mb-3">
+        <strong>Arrival Time:</strong>
+        {{ r.arrival_time|default:"Not provided" }}
+    </p>
+
+    <!-- ACTIONS -->
+    <div class="d-flex flex-wrap gap-2">
+
+        {% if r.status == "pending" %}
+            <form method="post" action="{% url 'request:accept' r.id %}">
+                {% csrf_token %}
+                <button class="btn btn-success action-btn">Accept</button>
+            </form>
+
+            <form method="post" action="{% url 'request:reject' r.id %}">
+                {% csrf_token %}
+                <button class="btn btn-danger action-btn">Reject</button>
+            </form>
+
+        {% elif r.status == "accepted" %}
+    <a href="{% url 'request:send_arrival_time' r.id %}"
+       class="btn btn-primary action-btn">
+        Send Arrival Time
+    </a>
+
+    {% if r.done %}
+        <span class="badge-status badge-completed">
+            Donation Completed 🎉
+        </span>
+    {% endif %}
+{% endif %}
+
+
+        <a href="{% url 'request:view_request' r.id %}"
+           class="btn btn-outline-info action-btn">
+            View Details
+        </a>
+    </div>
+</div>
+
+{% empty %}
+<div class="text-center text-muted py-5">
+    <h5>No blood requests yet</h5>
+    <p>Hospitals will contact you when your blood group is needed</p>
+</div>
+{% endfor %}
+
+{% endblock %}

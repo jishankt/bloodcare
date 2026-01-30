@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block title %}BloodCare | Hospital Login{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ================= LOGIN CARD ================= */
+.hospital-login-card {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(16px);
+    border-radius: 30px;
+    padding: 48px 42px;
+    box-shadow: 0 35px 90px rgba(0,0,0,0.18);
+}
+
+/* ================= HEADER ================= */
+.hospital-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.hospital-icon {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0ea5e9, #2563eb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    box-shadow: 0 18px 45px rgba(37,99,235,0.45);
+}
+
+.hospital-icon i {
+    font-size: 38px;
+    color: white;
+}
+
+/* ================= FORM ================= */
+.form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.form-control {
+    border-radius: 14px;
+    padding: 12px 16px;
+}
+
+.form-control:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 0.15rem rgba(37,99,235,0.25);
+}
+
+/* ================= BUTTON ================= */
+.hospital-btn {
+    padding: 13px;
+    border-radius: 999px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #2563eb, #0ea5e9);
+    border: none;
+}
+
+/* ================= LINK ================= */
+.hospital-link a {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.hospital-link a:hover {
+    text-decoration: underline;
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+    .hospital-login-card {
+        padding: 38px 28px;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center align-items-center" style="min-height: 75vh;">
+    <div class="col-lg-4 col-md-6 fade-up">
+
+        <div class="hospital-login-card">
+
+            <!-- HEADER -->
+            <div class="hospital-header">
+                <div class="hospital-icon mb-3">
+                    <i class="bi bi-hospital"></i>
+                </div>
+                <h3 class="fw-bold mb-1">Hospital Login</h3>
+                <p class="text-muted">
+                    Secure access for verified hospitals
+                </p>
+            </div>
+
+            <!-- FORM -->
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+                    <input type="text"
+                           name="username"
+                           class="form-control"
+                           placeholder="Hospital username"
+                           required>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">Password</label>
+                    <input type="password"
+                           name="password"
+                           class="form-control"
+                           placeholder="Enter password"
+                           required>
+                </div>
+
+                <button type="submit" class="btn hospital-btn w-100 text-white">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Login
+                </button>
+            </form>
+
+            <!-- FOOTER -->
+            <p class="mt-4 text-center hospital-link">
+                New hospital?
+                <a href="{% url 'hospital:hospital_register' %}">
+                    Register here
+                </a>
+            </p>
+
+        </div>
+
+        <p class="text-center text-muted small mt-3">
+            🔒 Secure access • Verified hospitals only
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

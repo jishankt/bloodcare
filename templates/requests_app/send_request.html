@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Send Blood Request | BloodCare{% endblock %}
+
+{% block extra_head %}
+<style>
+.request-card {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+}
+
+.request-header {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: white;
+    padding: 30px;
+    border-radius: 24px 24px 0 0;
+}
+
+.request-body {
+    padding: 30px;
+}
+
+.donor-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.2);
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+textarea {
+    border-radius: 14px !important;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center my-5">
+    <div class="col-lg-6 col-md-8">
+
+        <div class="request-card">
+
+            <!-- HEADER -->
+            <div class="request-header">
+                <h4 class="fw-bold mb-2">🩸 Send Blood Request</h4>
+                <div class="donor-chip">
+                    👤 {{ donor.user.username }}
+                </div>
+            </div>
+
+            <!-- BODY -->
+            <div class="request-body">
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            Message to Donor
+                        </label>
+                        <textarea name="message"
+                                  rows="4"
+                                  class="form-control"
+                                  placeholder="Enter message">{{ default_message|default:"You are requested to donate blood." }}</textarea>
+                        <small class="text-muted">
+                            Be polite and clear. This message will be sent to the donor.
+                        </small>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-danger px-4">
+                            Send Request
+                        </button>
+                        <a href="{% url 'hospital:hospital_dashboard' %}"
+                           class="btn btn-outline-secondary px-4">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endblock %}

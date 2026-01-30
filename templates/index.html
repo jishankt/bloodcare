@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% block title %}BloodCare | Donate Blood{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ================= ROOT ================= */
+:root {
+    --red-main: #dc2626;
+    --red-soft: #fee2e2;
+    --dark: #0f172a;
+}
+
+/* ================= HERO ================= */
+.hero-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 30px;
+    margin-bottom: 80px;
+}
+
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.2), transparent 40%),
+        linear-gradient(135deg, rgba(220,38,38,0.95), rgba(239,68,68,0.95)),
+        url("https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1600&q=80")
+        center/cover no-repeat;
+    z-index: 1;
+}
+
+.hero {
+    position: relative;
+    z-index: 2;
+    padding: 110px 90px;
+    color: white;
+    backdrop-filter: blur(8px);
+}
+
+/* Floating glow */
+.hero::after {
+    content: "";
+    position: absolute;
+    top: -120px;
+    right: -120px;
+    width: 300px;
+    height: 300px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    filter: blur(90px);
+}
+
+/* ================= TEXT ================= */
+.hero h1 {
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.hero h1 span {
+    background: linear-gradient(90deg, #fde68a, #facc15);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+    font-size: 1.15rem;
+    opacity: 0.95;
+    max-width: 560px;
+}
+
+/* ================= BUTTONS ================= */
+.hero .btn {
+    padding: 14px 34px;
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.hero .btn-light {
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+}
+
+.hero .btn-outline-light:hover {
+    background: white;
+    color: var(--red-main);
+}
+
+/* ================= ANIMATION ================= */
+.fade-up {
+    opacity: 0;
+    transform: translateY(45px);
+    transition: all 1s cubic-bezier(.2,.7,.2,1);
+}
+
+.fade-up.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ================= FEATURES ================= */
+.feature-card {
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(12px);
+    border-radius: 26px;
+    padding: 38px 30px;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.12);
+    transition: all 0.35s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px) scale(1.02);
+}
+
+.icon-glow {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: var(--red-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    box-shadow: 0 15px 40px rgba(220,38,38,0.35);
+}
+
+.icon-glow i {
+    font-size: 34px;
+    color: var(--red-main);
+}
+
+/* ================= CTA ================= */
+.cta {
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.95), rgba(249,250,251,0.95));
+    border-radius: 30px;
+    padding: 80px 40px;
+    box-shadow: 0 30px 90px rgba(0,0,0,0.15);
+}
+
+/* ================= MOBILE ================= */
+@media (max-width: 768px) {
+    .hero {
+        padding: 70px 35px;
+        text-align: center;
+    }
+
+    .hero p {
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero-wrapper fade-up">
+    <div class="hero-bg"></div>
+
+    <div class="hero">
+        <h1 class="display-5">
+            Donate Blood.<br>
+            <span>Save Lives Today.</span>
+        </h1>
+
+        <p class="mt-4">
+            BloodCare is a real-time blood donation platform connecting
+            verified donors with hospitals during life-saving emergencies.
+        </p>
+
+        <div class="mt-5 d-flex flex-wrap gap-3">
+            <a href="{% url 'donor:donor_register' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-heart-fill me-1"></i> Become a Donor
+            </a>
+            <a href="{% url 'hospital:hospital_register' %}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-hospital me-1"></i> Hospital Signup
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section class="mb-5">
+    <div class="row g-4">
+        <div class="col-md-4 fade-up">
+            <div class="feature-card text-center h-100">
+                <div class="icon-glow mb-4">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <h5 class="fw-bold">Verified & Secure</h5>
+                <p class="text-muted">
+                    Only trusted donors and verified hospitals can access the platform.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4 fade-up">
+            <div class="feature-card text-center h-100">
+                <div class="icon-glow mb-4">
+                    <i class="bi bi-alarm"></i>
+                </div>
+                <h5 class="fw-bold">Emergency Ready</h5>
+                <p class="text-muted">
+                    Instantly notify nearby donors during critical situations.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4 fade-up">
+            <div class="feature-card text-center h-100">
+                <div class="icon-glow mb-4">
+                    <i class="bi bi-heart-pulse"></i>
+                </div>
+                <h5 class="fw-bold">Life Saving Impact</h5>
+                <p class="text-muted">
+                    One donation can help save up to three lives.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta text-center fade-up">
+    <h2 class="fw-bold display-6">Be Someone’s Hero Today</h2>
+    <p class="mt-3 text-muted fs-5">
+        Your blood can give someone a second chance at life.
+    </p>
+    <a href="{% url 'donor:donor_register' %}" class="btn btn-main btn-lg mt-4">
+        <i class="bi bi-droplet-fill me-1"></i> Donate Now
+    </a>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const items = document.querySelectorAll('.fade-up');
+const reveal = () => {
+    items.forEach(el => {
+        if (el.getBoundingClientRect().top < window.innerHeight - 120) {
+            el.classList.add('show');
+        }
+    });
+};
+window.addEventListener('scroll', reveal);
+reveal();
+</script>
+{% endblock %}

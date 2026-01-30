@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% block title %}Donor Profile{% endblock %}
+
+{% block extra_head %}
+<style>
+.profile-card {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+.profile-header {
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    padding: 40px 20px;
+    text-align: center;
+    color: white;
+}
+
+.profile-header img {
+    width: 140px;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid white;
+    margin-bottom: 15px;
+}
+
+.profile-body {
+    padding: 30px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.info-value {
+    font-weight: 600;
+    color: #111827;
+}
+
+.badge-blood {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.status-active {
+    background: #bbf7d0;
+    color: #065f46;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-inactive {
+    background: #fecaca;
+    color: #7f1d1d;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center my-5">
+    <div class="col-lg-6 col-md-8">
+
+        <div class="profile-card">
+
+            <!-- HEADER -->
+            <div class="profile-header">
+                {% if donor.profile_photo %}
+                    <img src="{{ donor.profile_photo.url }}" alt="Profile Photo">
+                {% else %}
+                    <img src="https://via.placeholder.com/200" alt="No Profile Photo">
+                {% endif %}
+
+                <h4 class="fw-bold mb-1">
+                    {{ donor.user.username }}
+                </h4>
+                <p class="mb-2 opacity-75">
+                    Blood Donor
+                </p>
+
+                <span class="badge-blood">
+                    🩸 {{ donor.blood_group|default:"N/A" }}
+                </span>
+            </div>
+
+            <!-- BODY -->
+            <div class="profile-body">
+
+                <div class="info-item">
+                    <span class="info-label">📍 Location</span>
+                    <span class="info-value">{{ donor.location|default:"-" }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">📞 Phone</span>
+                    <span class="info-value">{{ donor.phone|default:"-" }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">📧 Email</span>
+                    <span class="info-value">{{ donor.user.email|default:"-" }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">🕒 Last Donation</span>
+                    <span class="info-value">
+                        {{ donor.last_donation_date|default:"Not donated yet" }}
+                    </span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">✅ Status</span>
+                    {% if donor.user.is_active %}
+                        <span class="status-active">Active Donor</span>
+                    {% else %}
+                        <span class="status-inactive">Inactive</span>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

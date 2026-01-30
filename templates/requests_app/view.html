@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% block title %}View Blood Request | BloodCare{% endblock %}
+
+{% block extra_head %}
+<style>
+/* Card styling */
+.request-card {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+/* Header gradient */
+.request-header {
+    background: linear-gradient(135deg, #dc2626, #b91c1b);
+    color: white;
+    padding: 25px 20px;
+    border-radius: 24px 24px 0 0;
+    text-align: center;
+}
+
+.request-header h4 {
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+/* Info section */
+.request-body {
+    padding: 30px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.info-value {
+    font-weight: 600;
+}
+
+/* Status pills */
+.status-pill {
+    padding: 5px 14px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: inline-block;
+}
+
+.status-pending { background: #fff3cd; color: #856404; }
+.status-accepted { background: #d1ecf1; color: #0c5460; }
+.status-rejected { background: #f8d7da; color: #721c24; }
+.status-done { background: #d4edda; color: #155724; }
+
+/* Buttons */
+.action-btn {
+    min-width: 140px;
+    margin-top: 10px;
+}
+.arrival-input {
+    max-width: 250px;
+    margin-right: 10px;
+    display: inline-block;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center my-5">
+    <div class="col-lg-7 col-md-8">
+
+        <div class="request-card">
+
+            <!-- HEADER -->
+            <div class="request-header">
+                <h4>🩸 Blood Request</h4>
+                <p class="mb-0">From: <strong>{{ request_obj.hospital.hospital_name }}</strong></p>
+            </div>
+
+            <!-- BODY -->
+            <div class="request-body">
+
+                <div class="info-item">
+                    <span class="info-label">Message</span>
+                    <span class="info-value">{{ request_obj.message }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Status</span>
+                    <span class="info-value">
+                        {% if request_obj.done %}
+                            <span class="status-pill status-done">Completed</span>
+                        {% elif request_obj.status == "pending" %}
+                            <span class="status-pill status-pending">Pending</span>
+                        {% elif request_obj.status == "accepted" %}
+                            <span class="status-pill status-accepted">Accepted</span>
+                        {% else %}
+                            <span class="status-pill status-rejected">Rejected</span>
+                        {% endif %}
+                    </span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">Arrival Time</span>
+                    <span class="info-value">{{ request_obj.arrival_time|default:"-" }}</span>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="mt-4 d-flex flex-wrap gap-2">
+                    {% if request_obj.status == "pending" %}
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="accept" class="btn btn-success action-btn">Accept</button>
+                        </form>
+
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="reject" class="btn btn-danger action-btn">Reject</button>
+                        </form>
+
+                    {% elif request_obj.status == "accepted" %}
+                        
+                        {% if not request_obj.done %}
+                        <form method="POST" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" name="done" class="btn btn-warning action-btn">Mark Done</button>
+                        </form>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+            </div>
+
+        </div>
+
+        <a href="{% url 'donor:donor_dashboard' %}" class="btn btn-outline-secondary mt-4 w-100">
+            ← Back to Dashboard
+        </a>
+
+    </div>
+</div>
+{% endblock %}

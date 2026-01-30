@@ -1,0 +1,322 @@
+{% extends 'base.html' %}
+{% block title %}Hospital Dashboard | BloodCare{% endblock %}
+
+{% block extra_head %}
+<style>
+/* ===== HEADER ===== */
+.hospital-header {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: white;
+    padding: 35px;
+    border-radius: 24px;
+    margin-bottom: 35px;
+    box-shadow: 0 25px 60px rgba(37,99,235,.35);
+}
+
+/* ===== STATS ===== */
+.stat-card {
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow: 0 12px 35px rgba(0,0,0,.07);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.stat-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.icon-blue { background:#dbeafe; color:#1d4ed8; }
+.icon-red { background:#fee2e2; color:#b91c1c; }
+.icon-green { background:#dcfce7; color:#166534; }
+
+.stat-number {
+    font-size: 1.6rem;
+    font-weight: 800;
+}
+
+.stat-label {
+    font-size: .85rem;
+    color: #6b7280;
+}
+
+/* ===== DONOR CARD ===== */
+.donor-card {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 18px 45px rgba(0,0,0,.08);
+    transition: all .3s ease;
+}
+
+.donor-card:hover {
+    transform: translateY(-6px);
+}
+
+.donor-photo {
+    height: 170px;
+    object-fit: cover;
+}
+
+.badge-blood {
+    background:#fee2e2;
+    color:#991b1b;
+    font-weight:700;
+    font-size:.75rem;
+    padding:5px 12px;
+    border-radius:999px;
+}
+
+.donor-card {
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: #fff;
+}
+
+.donor-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+.donor-img-wrapper {
+    background: linear-gradient(135deg, #ff4b5c, #ff6f61);
+    padding: 20px;
+    text-align: center;
+}
+
+.donor-photo {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    background: #fff;
+}
+
+.badge-blood {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    background: #dc3545;
+}
+
+.section-title h3 {
+    color: #dc3545;
+}
+
+
+/* ===== TABLE ===== */
+.table thead {
+    background: #f8fafc;
+}
+
+.status-pill {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: .75rem;
+    font-weight: 700;
+}
+
+.pending { background:#fff7ed; color:#9a3412; }
+.accepted { background:#e0f2fe; color:#075985; }
+.rejected { background:#fee2e2; color:#991b1b; }
+.done { background:#dcfce7; color:#166534; }
+
+.section-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HEADER -->
+<div class="hospital-header">
+    <h3 class="fw-bold mb-1">🏥 {{ hospital.hospital_name }}</h3>
+    <p class="mb-0 opacity-75">
+        Manage donors, send requests & track responses in real-time.
+    </p>
+</div>
+
+<!-- STATS -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-blue">👥</div>
+            <div>
+                <div class="stat-number">{{ donors|length }}</div>
+                <div class="stat-label">Available Donors</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-red">🩸</div>
+            <div>
+                <div class="stat-number">{{ requests|length }}</div>
+                <div class="stat-label">Requests Sent</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="stat-card">
+            <div class="stat-icon icon-green">✅</div>
+            <div>
+                <div class="stat-number">
+                    {{ requests|dictsort:"done"|length }}
+                </div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- SEARCH FORM -->
+<div class="mb-4">
+    <form method="GET" class="row g-2">
+        <div class="col-md-4">
+            <select name="blood_group" class="form-select">
+                <option value="">All Blood Groups</option>
+                <option value="A+" {% if request.GET.blood_group == "A+" %}selected{% endif %}>A+</option>
+                <option value="A-" {% if request.GET.blood_group == "A-" %}selected{% endif %}>A-</option>
+                <option value="B+" {% if request.GET.blood_group == "B+" %}selected{% endif %}>B+</option>
+                <option value="B-" {% if request.GET.blood_group == "B-" %}selected{% endif %}>B-</option>
+                <option value="AB+" {% if request.GET.blood_group == "AB+" %}selected{% endif %}>AB+</option>
+                <option value="AB-" {% if request.GET.blood_group == "AB-" %}selected{% endif %}>AB-</option>
+                <option value="O+" {% if request.GET.blood_group == "O+" %}selected{% endif %}>O+</option>
+                <option value="O-" {% if request.GET.blood_group == "O-" %}selected{% endif %}>O-</option>
+            </select>
+        </div>
+
+        <div class="col-md-4">
+            <input type="text" name="location" class="form-control" placeholder="Enter your location" value="{{ request.GET.location|default:'' }}">
+        </div>
+
+        <div class="col-md-4">
+            <button type="submit" class="btn btn-primary w-100">Search Donors</button>
+        </div>
+    </form>
+</div>
+
+
+<!-- DONORS -->
+<div class="section-title text-center mb-4">
+    <h3 class="fw-bold">Available Donors</h3>
+    <p class="text-muted small">Find and connect with nearby blood donors</p>
+</div>
+
+<div class="row g-4">
+{% for donor in donors %}
+    <div class="col-lg-3 col-md-4 col-sm-6">
+        <div class="card donor-card h-100 shadow-sm">
+            <div class="donor-img-wrapper">
+                <img src="{{ donor.profile_photo.url|default:'https://cdn-icons-png.flaticon.com/512/149/149071.png' }}"
+                     alt="Donor Photo"
+                     class="donor-photo">
+            </div>
+
+            <div class="card-body text-center">
+                <h6 class="fw-bold mb-1">{{ donor.user.username }}</h6>
+
+                <span class="badge badge-blood mb-2">
+                    🩸 {{ donor.blood_group }}
+                </span>
+
+                <p class="text-muted small mb-3">
+                    📍 {{ donor.location }}
+                </p>
+
+                <a href="{% url 'donor:donor_profile' donor.id %}"
+                   class="btn btn-outline-secondary btn-sm w-100 mb-2">
+                    View Profile
+                </a>
+
+                <a href="{% url 'request:send' donor.id %}"
+                   class="btn btn-danger btn-sm w-100">
+                    Send Request
+                </a>
+            </div>
+        </div>
+    </div>
+{% empty %}
+    <div class="col-12 text-center">
+        <p class="text-muted">No donors available at the moment.</p>
+    </div>
+{% endfor %}
+</div>
+
+
+<!-- REQUESTS -->
+<div class="section-title mt-5">Blood Requests</div>
+<div class="table-responsive">
+<table class="table table-hover align-middle">
+<thead>
+<tr>
+    <th>Donor</th>
+    <th>Blood</th>
+    <th>Location</th>
+    <th>Status</th>
+    <th>Arrival</th>
+    <th>Actions</th>
+</tr>
+</thead>
+<tbody>
+{% for req in requests %}
+<tr>
+    <td>{{ req.donor.user.username }}</td>
+    <td>{{ req.donor.blood_group }}</td>
+    <td>{{ req.donor.location }}</td>
+    <td>
+        {% if req.done %}
+            <span class="status-pill done">Completed</span>
+        {% elif req.status == "pending" %}
+            <span class="status-pill pending">Pending</span>
+        {% elif req.status == "accepted" %}
+            <span class="status-pill accepted">Accepted</span>
+        {% else %}
+            <span class="status-pill rejected">Rejected</span>
+        {% endif %}
+    </td>
+    <td>{{ req.arrival_time|default:"-" }}</td>
+    <td class="d-flex gap-1 flex-wrap">
+        <a href="{% url 'donor:donor_profile' req.donor.id %}"
+           class="btn btn-info btn-sm">Profile</a>
+
+ {% if req.status == "accepted" and req.donor.phone %}
+    <a href="https://wa.me/{{ req.donor.phone }}"
+       target="_blank"
+       class="btn btn-success btn-sm">WhatsApp</a>
+{% endif %}
+ {% if req.status == "accepted" and not req.done %}
+        <form method="post" action="{% url 'request:mark_done' req.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-warning btn-sm">Mark Done</button>
+        </form>
+    {% endif %}
+
+    </td>
+</tr>
+{% empty %}
+<tr>
+    <td colspan="6" class="text-center text-muted">
+        No requests yet.
+    </td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+{% endblock %}

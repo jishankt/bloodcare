@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}Hospital Profile | BloodCare{% endblock %}
+
+{% block extra_head %}
+<style>
+.profile-card {
+    background: white;
+    border-radius: 26px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+/* Header */
+.profile-header {
+    background: linear-gradient(135deg, #2563eb, #1e3a8a);
+    padding: 45px 20px;
+    text-align: center;
+    color: white;
+}
+
+.profile-header img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid white;
+    margin-bottom: 15px;
+}
+
+.profile-header h4 {
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.verified-badge {
+    background: #dcfce7;
+    color: #166534;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: .75rem;
+    font-weight: 700;
+}
+
+/* Body */
+.profile-body {
+    padding: 30px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.info-value {
+    font-weight: 600;
+}
+
+/* Gallery */
+.gallery img {
+    height: 160px;
+    object-fit: cover;
+    border-radius: 16px;
+    transition: transform .3s ease;
+}
+
+.gallery img:hover {
+    transform: scale(1.05);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center my-5">
+    <div class="col-lg-7 col-md-9">
+
+        <div class="profile-card">
+
+            <!-- HEADER -->
+            <div class="profile-header">
+                {% if hospital.profile_photo %}
+                    <img src="{{ hospital.profile_photo.url }}" alt="Hospital Photo">
+                {% else %}
+                    <img src="https://via.placeholder.com/200" alt="No Photo">
+                {% endif %}
+
+                <h4>{{ hospital.hospital_name }}</h4>
+
+                {% if hospital.is_approved %}
+                    <span class="verified-badge">✔ Verified Hospital</span>
+                {% else %}
+                    <span class="verified-badge" style="background:#fee2e2;color:#991b1b;">
+                        ⏳ Pending Approval
+                    </span>
+                {% endif %}
+            </div>
+
+            <!-- BODY -->
+            <div class="profile-body">
+
+                <div class="info-item">
+                    <span class="info-label">📍 Location</span>
+                    <span class="info-value">{{ hospital.location|default:"-" }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">📞 Phone</span>
+                    <span class="info-value">{{ hospital.phone|default:"-" }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">📧 Email</span>
+                    <span class="info-value">{{ hospital.email|default:"-" }}</span>
+                </div>
+
+                <div class="info-item">
+                    <span class="info-label">🏥 Status</span>
+                    <span class="info-value">
+                        {% if hospital.is_approved %}
+                            Active & Verified
+                        {% else %}
+                            Approval Pending
+                        {% endif %}
+                    </span>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- GALLERY -->
+        {% if hospital.images.exists %}
+        <div class="mt-4">
+            <h5 class="fw-bold mb-3">Hospital Gallery</h5>
+            <div class="row gallery">
+                {% for img in hospital.images.all %}
+                <div class="col-md-4 mb-3">
+                    <img src="{{ img.image.url }}" class="img-fluid" alt="Hospital Image">
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
